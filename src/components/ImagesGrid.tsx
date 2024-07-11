@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "./ImageCard";
 import Modal from "./Modal";
 import { useDrop } from "react-dnd";
 import update from "react-addons-update";
 
-import { ImageCardData } from "../types";
+import { ImageCardData, Data } from "../types";
 import Loader from "./Loader";
+import { addData, getAllData, updateData } from "../mocks/apiCalls";
+import { getLastUpdateTime } from "../utils/lastUpdate";
 
 interface DragItem {
   index: number;
@@ -13,7 +15,7 @@ interface DragItem {
   type: string;
 }
 
-const data = [
+const initialData = [
   { type: "bank-draft", title: "Bank Draft", position: 0 },
   { type: "bill-of-lading", title: "Bill of Lading", position: 1 },
   { type: "invoice", title: "Invoice", position: 2 },
@@ -22,8 +24,50 @@ const data = [
 ];
 
 const ImagesGrid: React.FC = () => {
-  const [cards, setCards] = useState<ImageCardData[]>([...data]);
+  const [cards, setCards] = useState<ImageCardData[]>([]);
   const [selectedCard, setSelectedCard] = useState<ImageCardData | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [lastUpdateData, setLastUpdateData] = useState<string>('');
+  const [saving, setSaving] = useState<boolean>(false);
+
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        const fetchedData = await getAllData();
+        if (!fetchedData || fetchedData?.length === 0) {
+          const { lastUpdate } = await addData(initialData);
+          setCards(initialData);
+          setLastUpdateData(lastUpdate);
+        } else {
+          setCards((fetchedData as Data[])?.sort((a, b) => a.position - b.position));
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    initializeData();
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    const updateDataHandler = async () => {
+      try {
+        setSaving(true);
+        const { lastUpdate } = await updateData(cards);
+        setLastUpdateData(lastUpdate)
+      } catch (error) {
+        console.error(error);
+      } finally { 
+        setSaving(false);
+        setLoading(false);
+      }
+    };
+    const intervalId: NodeJS.Timeout = setInterval(updateDataHandler, 5000);
+    return () => clearInterval(intervalId);
+  }, []);
+
 
   const moveCard = async (dragIndex: number, hoverIndex: number) => {
     const dragCard = cards[dragIndex];
@@ -60,21 +104,28 @@ const ImagesGrid: React.FC = () => {
 
   return (
     <>
-      <Loader />
-      <div>
-        <div ref={drop} className="card-grid">
-          {cards?.map((card, index) => (
-            <Card
-              key={card.type}
-              item={card}
-              index={index}
-              onClick={handleClick}
-              moveCard={moveCard}
-            />
-          ))}
-          {selectedCard && <Modal card={selectedCard} onClose={handleClose} />}
+      {loading ? (
+        <Loader />
+      ) : (
+        <div>
+          <div className="update-info">
+            <span>Last updated: {getLastUpdateTime(lastUpdateData)}</span>
+            {saving && <span className="saving">Saving...</span>}
+          </div>
+          <div ref={drop} className="card-grid">
+            {cards?.map((card, index) => (
+              <Card
+                key={card.type}
+                item={card}
+                index={index}
+                onClick={handleClick}
+                moveCard={moveCard}
+              />
+            ))}
+            {selectedCard && <Modal card={selectedCard} onClose={handleClose} />}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

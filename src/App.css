@@ -128,6 +128,25 @@ img {
   left: 38%;
 }
 
+.update-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.update-info span {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.saving {
+  color: #dc3545;
+  font-weight: bold;
+}
+
 .position-relative {
   position: 'relative';
 }

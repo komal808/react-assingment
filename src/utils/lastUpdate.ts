@@ -4,7 +4,14 @@ export function getLastUpdateTime(lastUpdate: string) {
     return "No updated time found";
   }
 
-  const lastUpdateTime = new Date(JSON.parse(lastUpdate));
+  let lastUpdateTime;
+  try {
+    lastUpdateTime = new Date(JSON.parse(lastUpdate));
+  } catch (error) {
+    console.error("Error parsing lastUpdate:", error);
+    return "Invalid date format";
+  }
+
   const currentTime = new Date();
   const timeDifference = currentTime.getTime() - lastUpdateTime.getTime();
 
@@ -14,7 +21,6 @@ export function getLastUpdateTime(lastUpdate: string) {
   const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
   let humanReadable = "";
-
   if (days > 0) {
     humanReadable += `${days} day${days > 1 ? "s" : ""} `;
   }

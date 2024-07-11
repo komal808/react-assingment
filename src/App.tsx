@@ -1,9 +1,11 @@
-import "./App.css";
-import ImagesGrid from './components/ImagesGrid';
+import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-function App() {
+import './App.css';
+import ImagesGrid from './components/ImagesGrid';
+
+const App: React.FC = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="App">
@@ -11,6 +13,6 @@ function App() {
       </div>
     </DndProvider>
   );
-}
+};
 
 export default App;
