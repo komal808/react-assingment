@@ -1,30 +1,54 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Front-end
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project is a React application configured with Vite and TypeScript, featuring an image gallery with drag-and-drop functionality. The application interacts with a pseudo backend using MSW for API mocking and Axios for making HTTP requests.
 
-## Expanding the ESLint configuration
+## How to run
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. Clone the repository 
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```sh 
+git clone [url](https://github.com/komal808/react-assingment)
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+2. Navigate to the project directory:
+
+```sh
+cd  react-assingment
+```
+
+3. Install dependecies
+
+```sh
+yarn install
+```
+4. Start the development server:
+
+```sh
+yarn run dev
+```
+
+
+### Thought Process
+
+* Drag and Drop: Images in the gallery can be dragged and dropped onto each other, triggering automatic re-ordering. 
+* Auto-Saving API: A parallel API runs every 5 seconds to simulate data saving, displaying "saving ..." on the DOM.
+* Local Storage Handling: Utilizes local storage to persist data in JSON format. Initially posts data if not present in local storage, otherwise retrieves and uses existing data.
+* Components: Created two main components: ImageGridList and ImageCard to manage the gallery layout and individual image cards.
+* API Endpoints: Implemented endpoints for bulk data update, retrieval, and initial posting of data.
+* Last Updated Timestamp: Tracks the last update time in local storage, updating it with each saving API call. This timestamp is also returned by the initial posting API for reference.
+* Modal Interaction: Clicking on any image opens it in a modal, which can be closed either by pressing ESC or clicking on the cross icon at the top right corner.
+
+### Functionality
+* Drag images to rearrange.
+* Observe auto-saving simulation.
+* Click on images to view in modal.
+
+### Technologies Used
+* React
+* TypeScript
+* React Hooks
+* Vite
+* MSW (Mock Service Worker)
+* Axios
